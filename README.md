@@ -1,3 +1,11 @@
+# December 1, 2017
+I've pulled this project over to attempt to get it, at minimum, running successfully on newer versions of PHP.
+I'm undecided on fixing the many, many glaring security holes.
+
+If you're interested in helping, please send me a message. I'm a college student with a family, so time will be limited.
+
+
+
 # Dragon Knight
 - See also: [Dragon Scourge](https://github.com/renderse7en/dragon-scourge)
 - [Live Demo](http://dragon.se7enet.com/)
