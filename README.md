@@ -1,3 +1,9 @@
+# December 4, 2017
+Rebuilt the install.php file to make the installation process correctly. Database installation time generally takes under 1 second now.
+Made several changes to the database structure to support more potential users, spells, items, monsters, etc.
+The biggest change to the database was to prepare to switch to PASSWORD_HASH over the current MD5 hashing which is very easy to crack. The current installer will still use MD5 for now until I make several updates to the lib.php file.
+
+
 # December 1, 2017
 I've pulled this project over to attempt to get it, at minimum, running successfully on newer versions of PHP.
 I'm undecided on fixing the many, many glaring security holes.
