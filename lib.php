@@ -51,18 +51,18 @@ function html_deep($value) {
 function opendb() { // Open database connection.
 
     include('config.php');
-    
-    $link = mysqli_connect($server, $user, $pass, $name) or echo mysqli_error();
-    
+    extract($dbsettings);
+    $link = mysql_connect($server, $user, $pass) or die(mysql_error());
+    mysql_select_db($name) or die(mysql_error());
     return $link;
 
 }
 
-function doquery($link, $query, $table) { // Something of a tiny little database abstraction layer.
+function doquery($query, $table) { // Something of a tiny little database abstraction layer.
     
     include('config.php');
     global $numqueries;
-    $sqlquery = mysqli_query($link,str_replace("{{table}}", $dbsettings["prefix"] . "_" . $table, $query)) or echo mysqli_error());
+    $sqlquery = mysql_query(str_replace("{{table}}", $dbsettings["prefix"] . "_" . $table, $query)) or die(mysql_error());
     $numqueries++;
     return $sqlquery;
 
@@ -126,8 +126,8 @@ function admindisplay($content, $title) { // Finalize page and output to browser
     
     global $numqueries, $userrow, $controlrow, $starttime, $version, $build;
     if (!isset($controlrow)) {
-        $controlquery = doquery($link,"SELECT * FROM {{table}} WHERE id='1' LIMIT 1", "control");
-        $controlrow = mysqli_fetch_array($controlquery);
+        $controlquery = doquery("SELECT * FROM {{table}} WHERE id='1' LIMIT 1", "control");
+        $controlrow = mysql_fetch_array($controlquery);
     }
     
     $template = gettemplate("admin");
@@ -157,8 +157,8 @@ function display($content, $title, $topnav=true, $leftnav=true, $rightnav=true, 
     
     global $numqueries, $userrow, $controlrow, $version, $build;
     if (!isset($controlrow)) {
-        $controlquery = doquery($link,"SELECT * FROM {{table}} WHERE id='1' LIMIT 1", "control");
-        $controlrow = mysqli_fetch_array($controlquery);
+        $controlquery = doquery("SELECT * FROM {{table}} WHERE id='1' LIMIT 1", "control");
+        $controlrow = mysql_fetch_array($controlquery);
     }
     if ($badstart == false) { global $starttime; } else { $starttime = $badstart; }
     
@@ -180,14 +180,14 @@ function display($content, $title, $topnav=true, $leftnav=true, $rightnav=true, 
     if (isset($userrow)) {
         
         // Get userrow again, in case something has been updated.
-        $userquery = doquery($link,"SELECT * FROM {{table}} WHERE id='".$userrow["id"]."' LIMIT 1", "users");
+        $userquery = doquery("SELECT * FROM {{table}} WHERE id='".$userrow["id"]."' LIMIT 1", "users");
         unset($userrow);
-        $userrow = mysqli_fetch_array($userquery);
+        $userrow = mysql_fetch_array($userquery);
         
         // Current town name.
         if ($userrow["currentaction"] == "In Town") {
-            $townquery = doquery($link,"SELECT * FROM {{table}} WHERE latitude='".$userrow["latitude"]."' AND longitude='".$userrow["longitude"]."' LIMIT 1", "towns");
-            $townrow = mysqli_fetch_array($townquery);
+            $townquery = doquery("SELECT * FROM {{table}} WHERE latitude='".$userrow["latitude"]."' AND longitude='".$userrow["longitude"]."' LIMIT 1", "towns");
+            $townrow = mysql_fetch_array($townquery);
             $userrow["currenttown"] = "Welcome to <b>".$townrow["name"]."</b>.<br /><br />";
         } else {
             $userrow["currenttown"] = "";
@@ -231,10 +231,10 @@ function display($content, $title, $topnav=true, $leftnav=true, $rightnav=true, 
         if ($userrow["currenthp"] <= ($userrow["maxhp"]/5)) { $userrow["currenthp"] = "<blink><span class=\"highlight\"><b>*".$userrow["currenthp"]."*</b></span></blink>"; }
         if ($userrow["currentmp"] <= ($userrow["maxmp"]/5)) { $userrow["currentmp"] = "<blink><span class=\"highlight\"><b>*".$userrow["currentmp"]."*</b></span></blink>"; }
 
-        $spellquery = doquery($link,"SELECT id,name,type FROM {{table}}","spells");
+        $spellquery = doquery("SELECT id,name,type FROM {{table}}","spells");
         $userspells = explode(",",$userrow["spells"]);
         $userrow["magiclist"] = "";
-        while ($spellrow = mysqli_fetch_array($spellquery)) {
+        while ($spellrow = mysql_fetch_array($spellquery)) {
             $spell = false;
             foreach($userspells as $a => $b) {
                 if ($b == $spellrow["id"] && $spellrow["type"] == 1) { $spell = true; }
@@ -247,9 +247,9 @@ function display($content, $title, $topnav=true, $leftnav=true, $rightnav=true, 
         
         // Travel To list.
         $townslist = explode(",",$userrow["towns"]);
-        $townquery2 = doquery($link,"SELECT * FROM {{table}} ORDER BY id", "towns");
+        $townquery2 = doquery("SELECT * FROM {{table}} ORDER BY id", "towns");
         $userrow["townslist"] = "";
-        while ($townrow2 = mysqli_fetch_array($townquery2)) {
+        while ($townrow2 = mysql_fetch_array($townquery2)) {
             $town = false;
             foreach($townslist as $a => $b) {
                 if ($b == $townrow2["id"]) { $town = true; }
