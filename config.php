@@ -1,11 +1,14 @@
 <?php // config.php :: Low-level app/database variables.
 
-$dbsettings = Array(
-        "server"        => "localhost",     // MySQL server name. (Default: localhost)
-        "user"          => "",              // MySQL username.
-        "pass"          => "",              // MySQL password.
-        "name"          => "",              // MySQL database name.
-        "prefix"        => "dk",            // Prefix for table names. (Default: dk)
-        "secretword"    => "");             // Secret word used when hashing information for cookies.
-
+		$server = "localhost";                   //MySQL Host, usually Localhost
+		$user = "";                         //MySQL Username
+	    $pass = "";              //MySQL Password for above user
+		$name = "";                        //MySQL Database name
+		$prefix = "dn";                          //Table prefix.. Being with a letter, no more than 3 letters recommended
+		
+		$link = new mysqli($server,$user,$pass,$name);
+		
+	
+		
+		
 ?>
